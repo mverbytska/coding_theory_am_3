@@ -64,12 +64,17 @@ class ShannonFano:
 
         return decoded_info
 
+    @staticmethod
+    def build_freq_dictionary(path_to_json_file):
+        with open(path_to_json_file, 'r') as json_file:
+            freq_table = json.load(json_file)
+        frequencies_dict = [(char, freq) for char, freq in freq_table.items()]
+        frequencies_dict.sort(key=lambda x: x[1], reverse=True)
+        return frequencies_dict
+
 
 if __name__ == "__main__":
-    with open('./letter_frequencies.json', 'r') as file:
-        freq_table = json.load(file)
-    frequencies = [(char, freq) for char, freq in freq_table.items()]
-    frequencies.sort(key=lambda x: x[1], reverse=True)
+    frequencies = ShannonFano.build_freq_dictionary('./letter_frequencies.json')
     sh = ShannonFano(frequencies)
     sh.characters_codes = sh.build_shannon_tree(frequencies)
     print(sh.characters_codes)
