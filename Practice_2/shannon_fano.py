@@ -76,7 +76,7 @@ class ShannonFano:
 if __name__ == "__main__":
     frequencies = ShannonFano.build_freq_dictionary('./letter_frequencies.json')
     sh = ShannonFano(frequencies)
-    sh.characters_codes = sh.build_shannon_tree(frequencies)
+    sh.characters_codes = sh.build_shannon_tree(sh.letter_frequency_table)
     print(sh.characters_codes)
     with open('./text.txt', 'r') as text_file:
         text_to_encode = text_file.read()
