@@ -1,6 +1,7 @@
 import json
 import re
 
+
 class HuffmanCode:
     class Node:
         def __init__(self, left_child=None, right_child=None):
@@ -14,7 +15,8 @@ class HuffmanCode:
         self.letter_frequency_table = letter_frequency_table
         self.character_codes = {}
 
-    def make_heap(self, nodes):
+    @staticmethod
+    def make_heap(nodes):
         while len(nodes) > 1:
             (char_1, freq_1) = nodes[-1]
             (char_2, freq_2) = nodes[-2]
@@ -28,7 +30,6 @@ class HuffmanCode:
         if type(node) is str:
             return {node: coded_string}
         (left, right) = node.children()
-        #freq_dictionary = dict()
         self.character_codes.update(self.build_huffman_tree(left, coded_string + '0'))
         self.character_codes.update(self.build_huffman_tree(right, coded_string + '1'))
         return self.character_codes
@@ -39,13 +40,25 @@ class HuffmanCode:
         for char in clean_text:
             encoded_string += self.character_codes.get(char.upper())
         return encoded_string
+
+    def decode(self, encoded_info):
+        decoded_info = ''
+        current_char_code = ''
+        for c in encoded_info:
+            current_char_code += c
+            for char, char_code in self.character_codes.items():
+                if char_code == current_char_code:
+                    decoded_info += char
+                    current_char_code = ''
+                    break
+        return decoded_info
+
     @staticmethod
     def clean_input_text(raw_text):
         # this pattern will match all the characters, that are not alphabetical, spaces, dots or newline signs
         pattern = r'[^a-zA-Z \n\.]'
         cleaned = re.sub(pattern, '', raw_text)
         return cleaned
-
 
     @staticmethod
     def build_freq_dictionary(path_to_json_file):
@@ -56,7 +69,7 @@ class HuffmanCode:
         return frequencies_dict
 
 
-if __name__== '__main__':
+if __name__ == '__main__':
     frequencies = HuffmanCode.build_freq_dictionary('./letter_frequencies.json')
     huffman = HuffmanCode(frequencies)
     root = huffman.make_heap(frequencies)
@@ -74,6 +87,8 @@ if __name__== '__main__':
     print(encoded_text)
 
     # decode text file
-
-
-
+    with open('./output_file.txt', 'r') as encoded_output_file:
+        text_to_decode = encoded_output_file.read()
+    decoded_text = huffman.decode(text_to_decode)
+    with open('./decoded_output.txt', 'w') as decoded_output_file:
+        decoded_output_file.write(decoded_text)
