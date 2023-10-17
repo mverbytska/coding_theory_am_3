@@ -1,5 +1,6 @@
 import json
 import re
+import sys
 
 
 class HuffmanCode:
@@ -16,15 +17,15 @@ class HuffmanCode:
         self.character_codes = {}
 
     @staticmethod
-    def make_heap(nodes):
-        while len(nodes) > 1:
-            (char_1, freq_1) = nodes[-1]
-            (char_2, freq_2) = nodes[-2]
-            nodes = nodes[:-2]
+    def make_heap(nodes_heap):
+        while len(nodes_heap) > 1:
+            (char_1, freq_1) = nodes_heap[-1]
+            (char_2, freq_2) = nodes_heap[-2]
+            nodes_heap = nodes_heap[:-2]
             new_node = HuffmanCode.Node(char_1, char_2)
-            nodes.append((new_node, freq_1 + freq_2))
-            nodes = sorted(nodes, key=lambda x: x[1], reverse=True)
-        return nodes[0][0]
+            nodes_heap.append((new_node, freq_1 + freq_2))
+            nodes_heap = sorted(nodes_heap, key=lambda x: x[1], reverse=True)
+        return nodes_heap[0][0]
 
     def build_huffman_tree(self, node, coded_string=''):
         if type(node) is str:
@@ -68,6 +69,13 @@ class HuffmanCode:
         frequencies_dict.sort(key=lambda x: x[1], reverse=True)
         return frequencies_dict
 
+    @staticmethod
+    def string_to_binary_bytes(encoded_text_string):
+        binary_bytes = bytes(int(encoded_text_string[i:i + 8], 2) for i in range(0, len(encoded_text_string), 8))
+        old_size = sys.getsizeof(encoded_text_string)
+        new_size = sys.getsizeof(binary_bytes)
+        print(f'Old size: {old_size}\nNew size: {new_size}')
+
 
 if __name__ == '__main__':
     frequencies = HuffmanCode.build_freq_dictionary('./letter_frequencies.json')
@@ -85,6 +93,9 @@ if __name__ == '__main__':
         output_file.write(encoded_text)
 
     print(encoded_text)
+
+    # print the length of the original info and the new one in bytes
+    HuffmanCode.string_to_binary_bytes(encoded_text)
 
     # decode text file
     with open('./output_file.txt', 'r') as encoded_output_file:

@@ -1,5 +1,6 @@
 import json
 import re
+import sys
 
 
 class ShannonFano:
@@ -73,6 +74,14 @@ class ShannonFano:
         return frequencies_dict
 
 
+    @staticmethod
+    def string_to_binary_bytes(encoded_text_string):
+        binary_bytes = bytes(int(encoded_text_string[i:i + 8], 2) for i in range(0, len(encoded_text_string), 8))
+        old_size = sys.getsizeof(encoded_text_string)
+        new_size = sys.getsizeof(binary_bytes)
+        print(f'Old size: {old_size}\nNew size: {new_size}')
+
+
 if __name__ == "__main__":
     frequencies = ShannonFano.build_freq_dictionary('./letter_frequencies.json')
     sh = ShannonFano(frequencies)
@@ -86,6 +95,9 @@ if __name__ == "__main__":
     with open('./output.txt', 'w') as output_file:
         output_file.write(encoded_text)
     print(encoded_text)
+
+    # print the length of the original info and the new one in bytes
+    ShannonFano.string_to_binary_bytes(encoded_text)
 
     # decoding
     with open('./output.txt', 'r') as decoded_file:
